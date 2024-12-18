@@ -1,0 +1,21 @@
+{
+  "name": "rabbit-server",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "app.js",
+  "scripts": {
+    "start": "NODE_ENV=prod node app.js",
+    "start-dev": "NODE_ENV=dev nodemon app.js"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-session": "^1.18.1",
+    "morgan": "^1.10.0",
+    "nodemon": "^3.1.9"
+  }
+}
