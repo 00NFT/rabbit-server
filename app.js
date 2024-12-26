@@ -1,6 +1,7 @@
 // 설치한 모듈 가져오기
 const express = require('express');
 const morgan = require('morgan');
+const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const dotenv = require('dotenv');
@@ -15,6 +16,9 @@ dotenv.config({ path: `.env.${env}` });
 
 const app = express();
 app.set('port', process.env.PORT || 8080); // 서버 실행 포트 설정
+
+// CORS 설정 (TODO: 추후 설정)
+app.use(cors()); // 모든 도메인 요청 허용
 
 app.use(morgan('dev')); // 로그 미들웨어
 app.use('/', express.static(path.join(__dirname, 'public'))); // 정적 파일 제공

@@ -3,12 +3,11 @@ const router = express.Router();
 let db = require('../lib/db.js');
 
 // ROOT 경로에 대한 라우터 설정
-router.get('/', async (req, res, next) => {
+router.get('/health', async (req, res, next) => {
     try {
-        const result = await db.query("SELECT 'HOME' FROM DUAL");
+        const result = await db.query("SELECT 'RABBIT_DEV' FROM DUAL");
         res.json({
-            message: 'Welcome Rabbit Server!',
-            results: result
+            message: `Welcome ${result[0].RABBIT_DEV} Server!`
         });
     } catch (error) {
         console.error(error);
