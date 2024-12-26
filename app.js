@@ -9,6 +9,7 @@ const path = require('path');
 
 // Router 설정
 const indexRouter = require('./routes/index');
+const betaRouter = require('./routes/betaReport');
 
 // 실행 환경 별 환경변수 분리
 const env = process.env.NODE_ENV || 'dev';
@@ -38,6 +39,7 @@ app.use(session({
 
 // Router 등록
 app.use('/', indexRouter);
+app.use('/api/v1/beta', betaRouter);
 
 // 404 ERROR Handler
 app.use((req, res, next) => {
