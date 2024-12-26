@@ -1,7 +1,8 @@
 // 베타테스트 후기 [prefix: /api/v1/beta]
 const express = require('express');
 const router = express.Router();
-let db = require('../lib/db.js');
+const db = require('../lib/db.js');
+const webhook = require('../lib/webhook.js');
 
 /**
  * 베타테스트 후기 저장
@@ -34,6 +35,9 @@ router.post("/", async(req, res, next) => {
             VALUES (?, ?, ?, ?, ?, ?)
         `;
         const result = await db.query(query, params);
+
+        // Webhook 메시지 전송
+        webhook.sendMessage(`**[ 🐰 베타 테스트 응답 작성 알림 💌 ]**\n${reqData.username} 용사님이 베타 테스트 응답을 달아주셨어요.`);
 
         res.status(201).json({
             id: result.insertId // 베타테스트 후기 저장 후 Key 값
