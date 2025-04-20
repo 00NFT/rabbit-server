@@ -1,12 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../lib/db.js');
-
-router.get("/", async (req, res, next) => {
-    res.json({
-        message: "card test"
-    })
-})
+const {v4: uuidv4} = require('uuid');
 
 /**
  * 카드 저장
@@ -30,15 +25,16 @@ router.post("/", async(req, res, next) => {
             });
         }
 
-        const params = [reqData.username, reqData.message];
-        const query = `
-            INSERT INTO THANKS_CARD (USERNAME, CARD_MESSAGE) 
-            VALUES (?, ?)
+        const generatedUUID = uuidv4().split('-')[0];
+        const params = [reqData.username, generatedUUID, reqData.game_result];
+        const insertQuery = `
+            INSERT INTO THANKS_CARD (USERNAME, UUID, RESULT)
+            VALUES (?, ?, ?)
         `;
-        const result = await db.query(query, params);
+        await db.query(insertQuery, params);
 
         res.status(201).json({
-            id: result.insertId // 메시지 저장 후 Key 값
+            id: generatedUUID
         });
     } catch (error) {
         console.error(error);
@@ -46,11 +42,36 @@ router.post("/", async(req, res, next) => {
     }
 })
 
+// card message 업데이트
+router.post("/update", async(req, res) => {
+    const {uuid, message} = req.body;
+
+    // 메시지 업데이트
+    const updateQuery = `UPDATE THANKS_CARD SET CARD_MESSAGE = ? WHERE UUID = ?`;
+    const params = [message, uuid];
+    await db.query(updateQuery, params);
+
+    // UUID로 카드 조회
+    const selectQuery = `SELECT * FROM THANKS_CARD WHERE UUID = ?`;
+    const [selectResult] = await db.query(selectQuery, [uuid]);
+
+    res.json(selectResult);
+})
+
+router.get("/:uuid", async(req, res) => {
+    const uuid = req.params.uuid;
+    const cardQuery =  `
+        SELECT * FROM THANKS_CARD WHERE UUID = ?
+    `;
+    const [rows] = await db.query(cardQuery, [uuid]);
+    res.json(rows);
+})
+
 /**
- * 카드 불러오기
+ * 카드 불러오기: 메인 화면에서 카드 메시지 불러오기
  */
 router.get("/", async(req, res) => {
-    const query = 'SELECT * FROM THANKS_CARD'
+    const query = 'SELECT * FROM THANKS_CARD ORDER BY REG_DATE DESC';
 
     db.query(query, (err, results) => {
         if (err) {

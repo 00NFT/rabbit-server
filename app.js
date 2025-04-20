@@ -19,9 +19,12 @@ dotenv.config({ path: `.env.${env}` });
 
 const app = express();
 app.set('port', process.env.PORT || 8080); // 서버 실행 포트 설정
+app.use(express.urlencoded({ extended: true }));
 
-// CORS 설정 (TODO: 추후 설정)
-app.use(cors()); // 모든 도메인 요청 허용
+// app.use((req, res, next) => {
+//     res.removeHeader('Access-Control-Allow-Origin'); // 헤더 중복 제거
+//     next();
+// });
 
 app.use(morgan('dev')); // 로그 미들웨어
 app.use('/', express.static(path.join(__dirname, 'public'))); // 정적 파일 제공
@@ -39,10 +42,10 @@ app.use(session({
     name: 'session-cookie',
 }));
 
-// Router 등록
+// // Router 등록
 app.use('/', indexRouter);
 app.use('/api/v1/beta', betaRouter);
-router.use('/card', cardRouter);
+app.use('/api/v1/card', cardRouter);
 
 // 404 ERROR Handler
 app.use((req, res, next) => {
